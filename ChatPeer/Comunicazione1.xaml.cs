@@ -69,14 +69,6 @@ namespace ChatPeer
                     Messaggi m = new Messaggi(ipRicevuto);
                     m.Show();
                 }
-                else if (message[0] == 'm')
-                {
-                    Console.WriteLine(message.Substring(2, message.Length));
-                }
-                else if (message[0] == 'e')
-                {
-                    //fa qualcosa per chiudere la connessione
-                }
             }
         }
         private void sendData(string ip, string messaggio)

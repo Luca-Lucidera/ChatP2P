@@ -22,11 +22,53 @@ namespace ChatPeer
     /// </summary>
     public partial class Messaggi : Window
     {
+        string username;
+        const int port = 2003;
+        UdpClient receivingClient;
+        UdpClient sendingClient;
+        Thread receivingThread;
         string ip;
         public Messaggi(string ip)
         {
             InitializeComponent();
             this.ip = ip;
+            //sendingClient = new UdpClient(ipDestinatario, port);
+            receivingClient = new UdpClient(port);
+
+            //thread per ricevere i dati in background => non bloccante
+            ThreadStart start = new ThreadStart(Receiver);
+            receivingThread = new Thread(start);
+            receivingThread.IsBackground = true;
+            receivingThread.Start();
+        }
+        private void Receiver()
+        {
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
+            string ipRicevuto = endPoint.Address.ToString();
+            while (true)
+            {
+                byte[] data = receivingClient.Receive(ref endPoint);
+                string message = Encoding.ASCII.GetString(data);
+                if (message[0] == 'm')
+                {
+                    Console.WriteLine(message.Length);
+                }
+                else if (message[0] == 'e')
+                {
+                    //fa qualcosa per chiudere la connessione
+                }
+            }
+        }
+        private void sendData(string ip, string messaggio)
+        {
+            sendingClient = new UdpClient(ip, port);
+            string toSend = messaggio;
+            byte[] data = Encoding.ASCII.GetBytes(toSend);
+            sendingClient.Send(data, data.Length);
+        }
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

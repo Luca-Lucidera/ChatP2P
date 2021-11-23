@@ -7,8 +7,9 @@
         mc:Ignorable="d"
         Title="Comunicazione1" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="txt_ip" HorizontalAlignment="Left" Margin="262,158,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="tryConnect" Content="Button" HorizontalAlignment="Left" Margin="498,156,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="tryConnect_Click"/>
+        <TextBox x:Name="txt_ip" HorizontalAlignment="Left" Margin="293,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="44"/>
+        <Button x:Name="tryConnect" Content="Button" HorizontalAlignment="Left" Margin="485,36,0,0" VerticalAlignment="Top" Height="44" Width="148" Click="tryConnect_Click"/>
+        <Label Content="Indirizzo IP:" HorizontalAlignment="Left" Margin="134,36,0,0" VerticalAlignment="Top" Height="44" Width="127"/>
 
     </Grid>
 </Window>

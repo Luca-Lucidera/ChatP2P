@@ -24,7 +24,6 @@ namespace ChatPeer
     {
         string username;
         const int port = 2003;
-        string ipDestinatario = "";
         UdpClient receivingClient;
         UdpClient sendingClient;
         Thread receivingThread;
@@ -34,6 +33,7 @@ namespace ChatPeer
             this.username = username;
             //sendingClient = new UdpClient(ipDestinatario, port);
             receivingClient = new UdpClient(port);
+
             //thread per ricevere i dati in background => non bloccante
             ThreadStart start = new ThreadStart(Receiver);
             receivingThread = new Thread(start);
@@ -44,22 +44,30 @@ namespace ChatPeer
         private void tryConnect_Click(object sender, RoutedEventArgs e)
         {
             sendingClient = new UdpClient(txt_ip.Text, port);
-            string toSend = "y;"+username;
+            string toSend = "c;"+username;
             byte[] data = Encoding.ASCII.GetBytes(toSend);
             sendingClient.Send(data, data.Length);
         }
         private void Receiver()
         {
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
-            
+            string ipRicevuto = endPoint.Address.ToString();
             while (true)
             {
                 byte[] data = receivingClient.Receive(ref endPoint);
                 string message = Encoding.ASCII.GetString(data);
-                if (message[0] == 'c')
+                if (message[0] == 'c')// c -> connessione 
                 {
                     string daRitornare = "y;" + username;
-                    sendData(endPoint.Address.ToString(), daRitornare);
+                    sendData(ipRicevuto, daRitornare);
+                }
+                else if (message[0] == 'y')
+                {
+                    string daRitornare = "y";
+                    sendData(ipRicevuto, daRitornare);
+                    this.Hide();
+                    Messaggi m = new Messaggi(ipRicevuto);
+                    m.Show();
                 }
                 else if (message[0] == 'm')
                 {
@@ -68,25 +76,8 @@ namespace ChatPeer
                 else if (message[0] == 'e')
                 {
                     //fa qualcosa per chiudere la connessione
-
-                }
-                else if (message[0] == 'y')
-                {
-                    string daRitornare = "y";
-                    sendData(endPoint.Address.ToString(), daRitornare);
                 }
             }
-        }
-        private void MessageReceived(string message)
-        {
-            MessageBox.Show(message);
-        }
-        private void sendData(string messaggio)
-        {
-            sendingClient = new UdpClient(txt_ip.Text, port);
-            string toSend = messaggio;
-            byte[] data = Encoding.ASCII.GetBytes(toSend);
-            sendingClient.Send(data, data.Length);
         }
         private void sendData(string ip, string messaggio)
         {

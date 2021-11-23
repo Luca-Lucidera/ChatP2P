@@ -72,3 +72,5 @@ D:\Scuola\GITHUB\ChatP2P\ChatPeer\obj\Debug\ChatPeer.csproj.GenerateResource.cac
 D:\Scuola\GITHUB\ChatP2P\ChatPeer\obj\Debug\ChatPeer.csproj.CoreCompileInputs.cache
 D:\Scuola\GITHUB\ChatP2P\ChatPeer\obj\Debug\ChatPeer.exe
 D:\Scuola\GITHUB\ChatP2P\ChatPeer\obj\Debug\ChatPeer.pdb
+C:\Users\lucid\Desktop\ChatPeer\ChatP2P\ChatPeer\obj\Debug\Messaggi.g.cs
+C:\Users\lucid\Desktop\ChatPeer\ChatP2P\ChatPeer\obj\Debug\Messaggi.baml

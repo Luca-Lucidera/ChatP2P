@@ -23,14 +23,16 @@ namespace ChatPeer
     public partial class Messaggi : Window
     {
         const int port = 2003;
+        string username;
         UdpClient receivingClient;
         UdpClient sendingClient;
         Thread receivingThread;
         string ip;
-        public Messaggi(string ip)
+        public Messaggi(string ip, string username)
         {
             InitializeComponent();
             this.ip = ip;
+            this.username = username;
             //sendingClient = new UdpClient(ipDestinatario, port);
             receivingClient = new UdpClient(port);
 
@@ -52,7 +54,8 @@ namespace ChatPeer
                 {
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        txt_all.Text += message.Substring(2,message.Length - 2) + "\n";
+                        string tutto = message.Substring(2, message.Length - 2) + "\n";
+                        txt_all.Text += tutto;
 
                     }));
                 }
@@ -72,6 +75,19 @@ namespace ChatPeer
         private void button_Click(object sender, RoutedEventArgs e)
         {
             sendData(ip, String.Format("m;{0}", txt_messaggio.Text));
+        }
+
+        private void btn_indietro_Click(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                sendingClient.Close();
+                receivingClient.Close();
+                Comunicazione1 m = new Comunicazione1(username);
+                m.Show();
+                this.Hide();
+
+            }));
         }
     }
 }

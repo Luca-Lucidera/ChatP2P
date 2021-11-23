@@ -73,7 +73,7 @@ namespace ChatPeer
                     {
                         sendingClient.Close();
                         receivingClient.Close();
-                        Messaggi m = new Messaggi(ipRicevuto);
+                        Messaggi m = new Messaggi(ipRicevuto,username);
                         m.Show();
                         this.Hide();
 

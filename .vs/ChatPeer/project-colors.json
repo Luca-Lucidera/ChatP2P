@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "28e27805-6003-46ec-882e-4b859a4b40f3": {
+      "ProjectGuid": "28e27805-6003-46ec-882e-4b859a4b40f3",
+      "DisplayName": "ChatPeer",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

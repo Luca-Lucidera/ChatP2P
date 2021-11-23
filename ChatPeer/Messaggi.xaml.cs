@@ -22,7 +22,6 @@ namespace ChatPeer
     /// </summary>
     public partial class Messaggi : Window
     {
-        string username;
         const int port = 2003;
         UdpClient receivingClient;
         UdpClient sendingClient;
@@ -51,7 +50,11 @@ namespace ChatPeer
                 string message = Encoding.ASCII.GetString(data);
                 if (message[0] == 'm')
                 {
-                    Console.WriteLine(message.Length);
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        txt_all.Text += message.Substring(2,message.Length - 2) + "\n";
+
+                    }));
                 }
                 else if (message[0] == 'e')
                 {
@@ -68,7 +71,7 @@ namespace ChatPeer
         }
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
+            sendData(ip, String.Format("m;{0}", txt_messaggio.Text));
         }
     }
 }

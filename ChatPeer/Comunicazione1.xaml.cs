@@ -38,24 +38,29 @@ namespace ChatPeer
             ThreadStart start = new ThreadStart(Receiver);
             receivingThread = new Thread(start);
             receivingThread.IsBackground = true;
+            receivingThread.SetApartmentState(ApartmentState.STA);
             receivingThread.Start();
+
         }
 
         private void tryConnect_Click(object sender, RoutedEventArgs e)
         {
             sendingClient = new UdpClient(txt_ip.Text, port);
-            string toSend = "c;"+username;
+            string toSend = "c;" + username;
             byte[] data = Encoding.ASCII.GetBytes(toSend);
             sendingClient.Send(data, data.Length);
         }
         private void Receiver()
         {
+
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
-            string ipRicevuto = endPoint.Address.ToString();
+
             while (true)
             {
                 byte[] data = receivingClient.Receive(ref endPoint);
                 string message = Encoding.ASCII.GetString(data);
+                string ipRicevuto = endPoint.Address.ToString();
+                //MessageBox.Show(message);
                 if (message[0] == 'c')// c -> connessione 
                 {
                     string daRitornare = "y;" + username;
@@ -63,14 +68,22 @@ namespace ChatPeer
                 }
                 else if (message[0] == 'y')
                 {
-                    string daRitornare = "y";
-                    sendData(ipRicevuto, daRitornare);
-                    this.Hide();
-                    Messaggi m = new Messaggi(ipRicevuto);
-                    m.Show();
+                    sendData(ipRicevuto, "y");
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        sendingClient.Close();
+                        receivingClient.Close();
+                        Messaggi m = new Messaggi(ipRicevuto);
+                        m.Show();
+                        this.Hide();
+
+                    }));
+                    break;
                 }
             }
+
         }
+
         private void sendData(string ip, string messaggio)
         {
             sendingClient = new UdpClient(ip, port);

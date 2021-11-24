@@ -60,7 +60,7 @@ namespace ChatPeer
                 byte[] data = receivingClient.Receive(ref endPoint);
                 string message = Encoding.ASCII.GetString(data);
                 string ipRicevuto = endPoint.Address.ToString();
-                //MessageBox.Show(message);
+                MessageBox.Show(message);
                 if (message[0] == 'c')// c -> connessione 
                 {
                     string daRitornare = "y;" + username;
@@ -68,17 +68,41 @@ namespace ChatPeer
                 }
                 else if (message[0] == 'y')
                 {
-                    sendData(ipRicevuto, "y");
-                    Dispatcher.BeginInvoke((Action)(() =>
+                    if (message.Length == 1)
                     {
-                        sendingClient.Close();
-                        receivingClient.Close();
-                        Messaggi m = new Messaggi(ipRicevuto,username);
-                        m.Show();
-                        this.Hide();
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            sendingClient.Close();
+                            receivingClient.Close();
+                            Messaggi m = new Messaggi(ipRicevuto, username);
+                            m.Show();
+                            this.Hide();
+                        }));
+                        break;
+                    }
+                    else
+                    {
+                        if (MessageBox.Show("Vuoi stabilire la connessione?", "Richiesta di connessione", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                        {
+                            sendData(ipRicevuto, "y");
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                sendingClient.Close();
+                                receivingClient.Close();
+                                Messaggi m = new Messaggi(ipRicevuto, username);
+                                m.Show();
+                                this.Hide();
+                            }));
+                            break;
+                        }
+                        else
+                        {
+                            sendData(ipRicevuto, "n");
+                        }
+                    }
 
-                    }));
-                    break;
+
+
                 }
             }
 

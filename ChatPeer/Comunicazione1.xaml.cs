@@ -95,7 +95,7 @@ namespace ChatPeer
                     {
                         sendingClient.Close();
                         receivingClient.Close();
-                        Messaggi m = new Messaggi(ipRicevuto, username);
+                        Messaggi m = new Messaggi(ipRicevuto, username, altroClinetUsername);
                         m.Show();
                         this.Hide();
                     }));

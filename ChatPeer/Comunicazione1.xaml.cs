@@ -31,7 +31,6 @@ namespace ChatPeer
         {
             InitializeComponent();
             this.username = username;
-            //sendingClient = new UdpClient(ipDestinatario, port);
             receivingClient = new UdpClient(port);
 
             //thread per ricevere i dati in background => non bloccante
@@ -46,30 +45,31 @@ namespace ChatPeer
         private void tryConnect_Click(object sender, RoutedEventArgs e)
         {
             sendingClient = new UdpClient(txt_ip.Text, port);
-            string toSend = "c;" + username;
+            string toSend = "c;" + username; //Primo peer vuole instaurare la connessione
             byte[] data = Encoding.ASCII.GetBytes(toSend);
             sendingClient.Send(data, data.Length);
         }
-        private void Receiver()
+        private void Receiver()//funzione che viene eseguita in parallelo dal thread di ricezione (receivingClient)
         {
-
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, port);
-
             while (true)
             {
                 byte[] data = receivingClient.Receive(ref endPoint);
                 string message = Encoding.ASCII.GetString(data);
                 string ipRicevuto = endPoint.Address.ToString();
-                MessageBox.Show(message);
-                if (message[0] == 'c')// c -> connessione 
+                //MessageBox.Show(message);
+                if (message[0] == 'c')//lo fa il secondo peer
                 {
-                    string daRitornare = "y;" + username;
-                    sendData(ipRicevuto, daRitornare);
-                }
-                else if (message[0] == 'y')
-                {
-                    if (message.Length == 1)
+                    //il secondo peer riceve C e il nome utente di chi vuole connettersi
+                    if (MessageBox.Show("Vuoi stabilire la connessione?", "Richiesta di connessione", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
+                        string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
+                        sendData(ipRicevuto, daRitornare); //invia il y;username al primo peer
+                        /*
+                            col fatto che il secondo peer ha accettato la connessione
+                            chiude questa finestra e aprirà la finestra per dialogare con
+                            l'altro peer
+                        */
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             sendingClient.Close();
@@ -78,37 +78,32 @@ namespace ChatPeer
                             m.Show();
                             this.Hide();
                         }));
-                        break;
                     }
                     else
                     {
-                        if (MessageBox.Show("Vuoi stabilire la connessione?", "Richiesta di connessione", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                        {
-                            sendData(ipRicevuto, "y");
-                            Dispatcher.BeginInvoke((Action)(() =>
-                            {
-                                sendingClient.Close();
-                                receivingClient.Close();
-                                Messaggi m = new Messaggi(ipRicevuto, username);
-                                m.Show();
-                                this.Hide();
-                            }));
-                            break;
-                        }
-                        else
-                        {
-                            sendData(ipRicevuto, "n");
-                        }
+                        //se il secondo peer rifiuta la connessione manda una n = no
+                        sendData(ipRicevuto, "n");
                     }
-
-
-
+                }
+                else if (message[0] == 'y')//questo lo eseguirà il primo peer nella terza fase
+                {
+                    //visto che il primo peer ha ricevuto il y, saprà che la connessione è stata accettata
+                    //e aprirà la pagina di dialogo
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        sendingClient.Close();
+                        receivingClient.Close();
+                        Messaggi m = new Messaggi(ipRicevuto, username);
+                        m.Show();
+                        this.Hide();
+                    }));
+                    break; //il break in questo caso serve per far finire il thread della ricezione dei messaggi
                 }
             }
 
         }
 
-        private void sendData(string ip, string messaggio)
+        private void sendData(string ip, string messaggio) //funzione per inviare dei dati
         {
             sendingClient = new UdpClient(ip, port);
             string toSend = messaggio;

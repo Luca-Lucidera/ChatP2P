@@ -58,13 +58,12 @@ namespace ChatPeer
                 byte[] data = receivingClient.Receive(ref endPoint);
                 string message = Encoding.ASCII.GetString(data);
                 string ipRicevuto = endPoint.Address.ToString();
-                //MessageBox.Show(message);
                 if (message[0] == 'c')//lo fa il secondo peer
                 {
                     //il secondo peer riceve C e il nome utente di chi vuole connettersi
                     if (MessageBox.Show("Vuoi stabilire la connessione?", "Richiesta di connessione", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        altroClinetUsername = message.Substring(1);
+                        altroClinetUsername = message.Substring(2);
                         string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
                         sendData(ipRicevuto, daRitornare); //invia il y;mioUsername al primo peer
                         /*
@@ -72,6 +71,7 @@ namespace ChatPeer
                             chiude questa finestra e aprirà la finestra per dialogare con
                             l'altro peer
                         */
+                        /*
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             sendingClient.Close();
@@ -80,6 +80,9 @@ namespace ChatPeer
                             m.Show();
                             this.Hide();
                         }));
+
+                        break;
+                        */
                     }
                     else
                     {
@@ -91,6 +94,9 @@ namespace ChatPeer
                 {
                     //visto che il primo peer ha ricevuto il y, saprà che la connessione è stata accettata
                     //e aprirà la pagina di dialogo
+                    altroClinetUsername = message.Substring(2);
+                    string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
+                    sendData(ipRicevuto, daRitornare);
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
                         sendingClient.Close();

@@ -23,6 +23,7 @@ namespace ChatPeer
     public partial class Comunicazione1 : Window
     {
         string username;
+        string altroClinetUsername;
         const int port = 2003;
         UdpClient receivingClient;
         UdpClient sendingClient;
@@ -63,8 +64,9 @@ namespace ChatPeer
                     //il secondo peer riceve C e il nome utente di chi vuole connettersi
                     if (MessageBox.Show("Vuoi stabilire la connessione?", "Richiesta di connessione", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
+                        altroClinetUsername = message.Substring(1);
                         string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
-                        sendData(ipRicevuto, daRitornare); //invia il y;username al primo peer
+                        sendData(ipRicevuto, daRitornare); //invia il y;mioUsername al primo peer
                         /*
                             col fatto che il secondo peer ha accettato la connessione
                             chiude questa finestra e aprirà la finestra per dialogare con
@@ -74,7 +76,7 @@ namespace ChatPeer
                         {
                             sendingClient.Close();
                             receivingClient.Close();
-                            Messaggi m = new Messaggi(ipRicevuto, username);
+                            Messaggi m = new Messaggi(ipRicevuto, username, altroClinetUsername);
                             m.Show();
                             this.Hide();
                         }));

@@ -23,16 +23,18 @@ namespace ChatPeer
     public partial class Messaggi : Window
     {
         const int port = 2003;
-        string username;
+        string mioUsername;
+        string altroClient;
         UdpClient receivingClient;
         UdpClient sendingClient;
         Thread receivingThread;
         string ip;
-        public Messaggi(string ip, string username)
+        public Messaggi(string ip, string username, string altroClient)
         {
             InitializeComponent();
             this.ip = ip;
-            this.username = username;
+            this.mioUsername = username;
+            this.altroClient = altroClient;
             //sendingClient = new UdpClient(ipDestinatario, port);
             receivingClient = new UdpClient(port);
 
@@ -54,14 +56,22 @@ namespace ChatPeer
                 {
                     Dispatcher.BeginInvoke((Action)(() =>
                     {
-                        string tutto = message.Substring(2, message.Length - 2) + "\n";
+                        string tutto = String.Format("{0}: {1}", altroClient, message.Substring(2, message.Length - 2)) + "\n";
                         txt_all.Text += tutto;
 
                     }));
                 }
                 else if (message[0] == 'e')
                 {
-                    //fa qualcosa per chiudere la connessione
+                    MessageBox.Show("L'altro client ha chiuso la connessione!");
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        sendingClient.Close();
+                        receivingClient.Close();
+                        Comunicazione1 m = new Comunicazione1(mioUsername);
+                        m.Show();
+                        this.Hide();
+                    }));
                 }
             }
         }
@@ -74,19 +84,20 @@ namespace ChatPeer
         }
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            txt_all.Text += mioUsername + " " + txt_messaggio.Text + "\n";
             sendData(ip, String.Format("m;{0}", txt_messaggio.Text));
         }
 
         private void btn_indietro_Click(object sender, RoutedEventArgs e)
         {
+            sendData(ip, "e");
             Dispatcher.BeginInvoke((Action)(() =>
             {
                 sendingClient.Close();
                 receivingClient.Close();
-                Comunicazione1 m = new Comunicazione1(username);
+                Comunicazione1 m = new Comunicazione1(mioUsername);
                 m.Show();
                 this.Hide();
-
             }));
         }
     }

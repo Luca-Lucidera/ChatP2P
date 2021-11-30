@@ -23,7 +23,7 @@ namespace ChatPeer
     public partial class Comunicazione1 : Window
     {
         string username;
-        string altroClinetUsername;
+        string altroClinetUsername = "";
         const int port = 2003;
         UdpClient receivingClient;
         UdpClient sendingClient;
@@ -66,23 +66,6 @@ namespace ChatPeer
                         altroClinetUsername = message.Substring(2);
                         string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
                         sendData(ipRicevuto, daRitornare); //invia il y;mioUsername al primo peer
-                        /*
-                            col fatto che il secondo peer ha accettato la connessione
-                            chiude questa finestra e aprirà la finestra per dialogare con
-                            l'altro peer
-                        */
-                        /*
-                        Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            sendingClient.Close();
-                            receivingClient.Close();
-                            Messaggi m = new Messaggi(ipRicevuto, username, altroClinetUsername);
-                            m.Show();
-                            this.Hide();
-                        }));
-
-                        break;
-                        */
                     }
                     else
                     {
@@ -94,8 +77,17 @@ namespace ChatPeer
                 {
                     //visto che il primo peer ha ricevuto il y, saprà che la connessione è stata accettata
                     //e aprirà la pagina di dialogo
-                    altroClinetUsername = message.Substring(2);
-                    string daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
+                    string daRitornare = "";
+                    if (altroClinetUsername == "")
+                    {
+                        altroClinetUsername = message.Substring(2);
+                        daRitornare = "y;" + username; //Il secondo peer invia y = yes e il suo Username
+                    }
+                    else
+                    {
+                        daRitornare = "y";
+
+                    }
                     sendData(ipRicevuto, daRitornare);
                     Dispatcher.BeginInvoke((Action)(() =>
                     {

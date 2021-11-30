@@ -99,7 +99,7 @@ namespace ChatPeer
         //torna alla schermata delle connessioni
         private void btn_indietro_Click(object sender, RoutedEventArgs e)
         {
-            sendData(ip, "e");//invio il messaggio per finire la connessione 
+            sendData(ip, "e;");//invio il messaggio per finire la connessione 
             receivingThread.Abort();//visto che non sono nel thread lo faccio finire con un eccezione volontaria
             Dispatcher.BeginInvoke((Action)(() =>
             {
